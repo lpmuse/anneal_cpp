@@ -1,7 +1,7 @@
 # Problem Name
 colpitts
-# NX, ND, NS
-7, 3, 0
+# NX,  NS
+7, 0
 # equations
 alpha*yy2
 -gamma*(yy1+yy3)-qq*yy2
