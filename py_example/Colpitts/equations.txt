@@ -1,0 +1,21 @@
+# Problem Name
+colpitts
+# NX,  NS
+7, 0
+# equations
+alpha*yy2
+-gamma*(yy1+yy3)-qq*yy2
+eta*(yy2+1-exp(-yy1))
+0
+0
+0
+0
+# variable names
+yy1
+yy2
+yy3
+alpha
+gamma
+qq
+eta
+#

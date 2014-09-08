@@ -1,0 +1,19 @@
+# Problem Name
+lorenz96
+# NX, ND, NS
+6, 5, 0
+# equations
+yy5*(yy2-yy4)-yy1+FF1
+yy1*(yy3-yy5)-yy2+FF1
+yy2*(yy4-yy1)-yy3+FF1
+yy3*(yy5-yy2)-yy4+FF1
+yy4*(yy1-yy3)-yy5+FF1
+0
+# variable names
+yy1
+yy2
+yy3
+yy4
+yy5
+FF1
+#
