@@ -1,0 +1,19 @@
+# Problem Name
+lorenz96
+# NX, NS
+6, 0
+# equations
+sigma*(yy-xx)
+xx*(rr-zz)-yy
+xx*yy-bb*zz
+0
+0
+0
+# variable names
+xx
+yy
+zz
+sigma
+rr
+bb
+#
