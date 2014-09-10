@@ -19,7 +19,8 @@ import argparse as agp
 # Open the Python module containing the ODE's.
 # First, read in the name of the module file.
 parser = agp.ArgumentParser()
-parser.add_argument('-e', '--equations', action='store', dest='equations', default='equations.py')
+parser.add_argument('-e', '--equations', action='store', dest='equations',
+                    default='equations.py')
 args = parser.parse_args()
 equations = args.equations
 
@@ -34,7 +35,6 @@ try:
   eq = __import__(module_name)
 finally:
   sys.path[:] = path
-#import equations
 
 # Get the problem name
 try:
@@ -67,42 +67,52 @@ except:
 Jac = eq.VF.jacobian(eq.syms)
 
 # Convert the vector field and Jacobian into C-code format
-outVF = []
+outVF = []  # vector field
 for i in range(NX):
-  tmp = '%s' % sym.ccode(eq.VF[i])
+  Fstr = '{0}'.format(sym.ccode(eq.VF[i]))
   for j in range(NX):
-    tmp = tmp.replace('%s'%eq.syms[j], 'x[%d]'%j)
+    Fstr = Fstr.replace('{0}'.format(eq.syms[j]),
+                       'x[{0}]'.format(j))
   for j in range(NS):
-    tmp = tmp.replace('%s'%eq.stims[j], 'sti[it][%d]'%j)
-  outVF.append(tmp)
+    Fstr = Fstr.replace('{0}'.format(eq.stims[j]),
+                        'sti[it][{0}]'.format(j))
+  outVF.append(Fstr)
 
-outDF=[]
+outDF = []  # Jacobian of the vector field
 for i in range(NX):
   for j in range(NX):
-    tmp = '%s' % sym.ccode(Jac[i,j])
+    Fstr = '{0}'.format(sym.ccode(Jac[i,j]))
     for k in range(NX):
-      tmp=tmp.replace('%s'%eq.syms[k], 'x[%d]'%k)
+      Fstr = Fstr.replace('{0}'.format(eq.syms[k]),
+                          'x[{0}]'.format(k))
     for k in range(NS):
-      tmp=tmp.replace('%s'%eq.stims[k], 'sti[it][%d]'%k)
-    outDF.append(tmp)
+      Fstr = Fstr.replace('{0}'.format(eq.stims[k]),
+                          'sti[it][{0}]'.format(k))
+    outDF.append(Fstr)
 
 ################################################################################
 # This is where we start writing the C++ source file itself.
 f = open('func.cpp','w')
-f.write('#define NX %d\t// dim of state variable + number of parameters\n\
-#define NS %d\t// number of stimulus\n\
-using namespace alglib;\n\
-void func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt);\n\
-void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac);\n'% (NX,NS))
+f.write('#define NX {0}  // dim of state variable + number of parameters\n'.format(NX))
+f.write('#define NS {0}  // number of stimuli\n'.format(NS))
 
-f.write('\n\nvoid func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt){\n\t//%s vector field\n'% Problem)
+f.write('\nusing namespace alglib;\n')
+
+f.write('void func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt);\n')
+f.write('void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac);\n')
+
+f.write('\n// {0} vector field\n'.format(Problem))
+f.write('void func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt)\n{\n')
 for i in range(NX):
-  f.write('\tdxdt[%d]=%s;\n' %(i,outVF[i]))
-f.write('\n}\n\n\
-void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac){\n\t//%s Jacobian matrix\n' % Problem )
+  f.write('    dxdt[{0}] = {1};\n'.format(i,outVF[i]))
+f.write('}\n\n')
+
+f.write('//{0} Jacobian matrix'.format(Problem))
+f.write('void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac)\n{\n')
 for i in range(NX):
   for j in range(NX):
-    f.write('\tJac[%d][%d]=%s;\n' %(i,j,outDF[i*NX+j]))
-f.write('\n}\n')
-print 'Generated func.cpp sucessfully\n'
+    f.write('    Jac[{0}][{1}] = {2};\n'.format(i,j,outDF[i*NX+j]))
+f.write('}\n')
+
 f.close()
+print 'Generated func.cpp sucessfully!'
