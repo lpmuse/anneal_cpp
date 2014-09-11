@@ -95,19 +95,19 @@ for i in range(NX):
 f = open('func.cpp','w')
 f.write('#define NX {0}  // dim of state variable + number of parameters\n'.format(NX))
 f.write('#define NS {0}  // number of stimuli\n'.format(NS))
-
-f.write('\nusing namespace alglib;\n')
-
+f.write('\n')
+f.write('using namespace alglib;\n')
+f.write('\n')
 f.write('void func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt);\n')
 f.write('void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac);\n')
-
-f.write('\n// {0} vector field\n'.format(Problem))
+f.write('\n')
+f.write('// {0} vector field\n'.format(Problem))
 f.write('void func_origin(real_1d_array &x, int it, real_2d_array &sti, real_1d_array &dxdt)\n{\n')
 for i in range(NX):
   f.write('    dxdt[{0}] = {1};\n'.format(i,outVF[i]))
-f.write('}\n\n')
-
-f.write('//{0} Jacobian matrix'.format(Problem))
+f.write('}\n')
+f.write('\n')
+f.write('//{0} Jacobian matrix\n'.format(Problem))
 f.write('void func_DF(real_1d_array &x, int it, real_2d_array &sti, real_2d_array &Jac)\n{\n')
 for i in range(NX):
   for j in range(NX):

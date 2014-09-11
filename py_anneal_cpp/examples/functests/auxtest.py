@@ -8,6 +8,15 @@ import sympy as sym
 def func1(x):
     return x
 
+def func2(x):
+    return 5*x
+
+def func3(x):
+    if x < 0:
+        return 5*x
+    else:
+        return 10*x
+
 ################################################################################
 
 # problem name
@@ -26,5 +35,5 @@ for X in X_list:
     syms.append(symbol_ptr)
 
 # define vector field symbolically
-dxdt_list = [func1(x)]
+dxdt_list = [func2(x)]
 VF = sym.Matrix(1, NX, dxdt_list)
