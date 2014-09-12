@@ -6,7 +6,7 @@
 #define NPATH 1  // number of paths
 #define BETA_MAX 24  // maximal beta
 #define MULT_BASE 2  // base of the exponential expression MULT_BASE^BETA
-#define RM 4  // Rm
+#define RM 10000  // Rm
 #define RF0 0.01  // initial Rf
 
 #include "func.cpp"

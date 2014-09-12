@@ -7,7 +7,7 @@ import sympy as sym
 problem_name = 'lorenz63'
 
 # no stimuli; define as empty tuple
-stims = ()
+stims = []
 
 # define lists of symbols for state variables and stimuli
 syms = []

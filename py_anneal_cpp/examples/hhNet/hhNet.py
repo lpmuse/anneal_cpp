@@ -21,7 +21,7 @@ def rate_exp(V, Vt, Vs, A, B, C):
     used for ALL x!
     """
     u = (V - Vt)/Vs
-    coef = mpm.taylor(den, 0, 2)
+    coef = mpm.taylor(den, 0, 25)
     den_poly = sym.expand(mpm.polyval(coef[::-1], u) / u)
     return A / den_poly
 
@@ -118,9 +118,22 @@ Bbn = 0.0
 Cbn = 0.125
 
 # define the vector field symbolically
+# NOTE: V is rescaled to be between 0 and 1.  This means applying the transformations:
+#             V --> (V - V_min) / (V_max - V_min)
+#             dVdt --> dVdt / (V_max - V_min)
+# This means applying the following replacements:
+#             V replaced with V*(V_max - V_min) + V_min
+#             dVdt replaced with dVdt*(V_max - V_min)
+Vmax = 20.0  # mV
+Vmin = -80.0  # mV
+Vdiff = Vmax - Vmin
+# define U as a placeholder for transformed V
+UU = sym.symbols('UU')
+UU = VV * Vdiff + Vmin
+
 dxdt_list = []
-dxdt_list.append(gNa*pow(mm,3)*hh*(ENa - VV) + gK*pow(nn,4)*(EK - VV) + gL*(EL - VV) \
-                 + pinj*Iinj_1)
+dxdt_list.append((gNa*pow(mm,3)*hh*(ENa - UU) + gK*pow(nn,4)*(EK - UU) + gL*(EL - UU) \
+                  + pinj*Iinj_1) / Vdiff)
 GV_list = [mm, hh, nn]
 Vkin_list = [Vtam, Vsam, Vtbm, Vsbm,
              Vtah, Vsah, Vtbh, Vsbh,
@@ -133,13 +146,13 @@ for i,gv in enumerate(GV_list):
     print Aa, Ba, Ca, Ab, Bb, Cb
     Vta, Vsa, Vtb, Vsb = Vkin_list[4*i:4*i+4]
     if Aa != 0 and Ba == 1 and Ca == 0:
-        alpha = rate_exp(VV, Vta, Vsa, Aa, Ba, Ca)
+        alpha = rate_exp(UU, Vta, Vsa, Aa, Ba, Ca)
     else:
-        alpha = rate(VV, Vta, Vsa, Aa, Ba, Ca)
+        alpha = rate(UU, Vta, Vsa, Aa, Ba, Ca)
     if Ab != 0 and Bb == 1 and Cb == 0:
-        beta = rate_exp(VV, Vtb, Vsb, Ab, Bb, Cb)
+        beta = rate_exp(UU, Vtb, Vsb, Ab, Bb, Cb)
     else:
-        beta = rate(VV, Vtb, Vsb, Ab, Bb, Cb)
+        beta = rate(UU, Vtb, Vsb, Ab, Bb, Cb)
     
     dxdt_list.append(alpha*(1 - gv) - beta*gv)
 

@@ -31,9 +31,6 @@ void slice(real_2d_array &matrix, int i, real_1d_array &output){
 	for(j=0;j<c;j++)
 		output[j] = matrix[i][j];
 }
-	
-
-
 
 void action_grad(const real_1d_array &x, double &action, real_1d_array &grad, void *ptr) {
 	real_2d_array XX, grad_m, test;
