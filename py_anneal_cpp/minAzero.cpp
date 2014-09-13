@@ -8,41 +8,46 @@ real_2d_array Ydata;
 real_2d_array stimulus;
 
 void readdata(real_2d_array &data){
+  // Read in experimental data (or twin experiment data)
 	FILE *fp;
 	fp = fopen("./twin_data.dat","r");
 	int i,j;
-	for(i=0;i<NT;i++)
-		for(j=0;j<NX;j++)
-			fscanf(fp,"%lf", &data[i][j]);
+	for(i = 0; i < NT; i++)
+		for(j = 0; j < NX; j++)
+			fscanf(fp, "%lf", &data[i][j]);
 }
 
 void readstimulus(real_2d_array &data){
+  // Read stimulus used during experiment.
 	FILE *fp;
 	fp = fopen("./stimulus.dat","r");
 	int i,j;
-	for(i=0;i<NT;i++)
-		for(j=0;j<NS;j++)
-			fscanf(fp,"%lf", &data[i][j]);
+	for(i = 0; i < NT; i++)
+		for(j = 0; j < NS; j++)
+			fscanf(fp, "%lf", &data[i][j]);
 }
 
 void slice(real_2d_array &matrix, int i, real_1d_array &output){
+  // Takes row i from matrix, and stroes it in output
 	int j;
 	int c = matrix.cols();
-	for(j=0;j<c;j++)
+	for(j = 0; j < c; j++)
 		output[j] = matrix[i][j];
 }
 	
 
 
 
-void action_grad(const real_1d_array &x, double &action, real_1d_array &grad, void *ptr) {
+void action_grad(const real_1d_array &x, double &action, real_1d_array &grad, void *ptr)
+{
+  // Calculates the action and its gradient.
 	real_2d_array XX, grad_m, test;
    	XX.setlength(NT,NX);
 	grad_m.setlength(NT,NX);
 	test.setlength(NT,NX);
 	int i,j,k;
-	for(i=0;i<NT;i++){
-		for(j=0;j<NX;j++){
+	for(i = 0; i < NT; i++){
+		for(j = 0; j < NX; j++){
 			XX[i][j] = x[NX*i+j];
 		}
 	}

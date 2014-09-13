@@ -10,3 +10,7 @@
 #define RF0 0.01  // initial Rf
 
 #include "func.cpp"
+
+// Set data, stimulus file names below
+char data_fname[] = "twin_data.dat";
+char stim_fname[] = "stimulus.dat";
