@@ -23,7 +23,7 @@ def rate_exp(V, Vt, Vs, A, B, C):
     u = (V - Vt)/Vs
     coef = mpm.taylor(den, 0, 25)
     den_poly = sym.expand(mpm.polyval(coef[::-1], u) / u)
-    return A / den_poly
+    return A / (Vs*den_poly)
 
 def den(u):
     return sym.exp(u) - 1
@@ -55,10 +55,10 @@ for S in S_list:
 syms = []
 X_list = []
 for i in range(NN):
-    X_list.append('VV'.format(i+1))
-    X_list.append('mm'.format(i+1))
-    X_list.append('hh'.format(i+1))
-    X_list.append('nn'.format(i+1))
+    X_list.append('VV_{0}'.format(i+1))
+    X_list.append('mm_{0}'.format(i+1))
+    X_list.append('hh_{0}'.format(i+1))
+    X_list.append('nn_{0}'.format(i+1))
 NX = len(X_list)
 for X in X_list:
     symbol_ptr = sym.symbols(X)
@@ -70,6 +70,8 @@ for X in X_list:
 NP = 37
 # define all of the fixed parameters
 NP_FIXED = 37
+# load in parameter values
+p = np.loadtxt(par_fname)
 # injected current surface area factor
 pinj = 1.0
 # maximal conductances
