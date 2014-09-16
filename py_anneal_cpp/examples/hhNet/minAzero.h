@@ -1,6 +1,6 @@
 // header file for minAzero, containing problem information
 
-#define NT 10  // number of time steps
+#define NT 100  // number of time steps
 #define DT 0.02  // time step size
 #define NMEA 1  // number of measurements
 #define NPATH 1  // number of paths
