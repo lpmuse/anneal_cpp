@@ -70,20 +70,19 @@ void action_grad(const real_1d_array &x, double &action, real_1d_array &grad, vo
 	tmpm2.setlength(NX,NX);
 
 	action = 0;
-	for(i=0;i<NT;i++)
-		for(j=0;j<NX;j++)
+	for(i = 0; i < NT; i++)
+		for(j = 0; j < NX; j++)
 			grad_m[i][j]=0;
-	for(i=0;i<NMEA;i++){
-		for(j=0;j<NT;j++){
-			
-			tmpd = (XX[j][2*i]-Ydata[j][2*i]);
-			
-			action = action + Rm*tmpd*tmpd;
-			grad_m[j][2*i] = grad_m[j][2*i] + 2*Rm*tmpd;
+	for(i = 0; i < NMEA; i++){
+		for(j = 0; j < NT; j++){
+		        l = Lidx[i] // get the index of the measured component
+			tmpd = XX[j][l] - Ydata[j][l];
+			action += Rm*tmpd*tmpd;
+			grad_m[j][l] += 2*Rm*tmpd;
 		}
 	}
 	
-	for(j=0;j<(NT-1);j++){
+	for(j = 0; j < (NT-1); j++){
 		slice(XX, j, x1);
 		slice(XX, j+1, x2);
 		func_origin(x1, j, stimulus, f1);
@@ -91,30 +90,28 @@ void action_grad(const real_1d_array &x, double &action, real_1d_array &grad, vo
 		
 		func_DF(x1, j, stimulus, J1);
 		func_DF(x2, j, stimulus, J2);
-		for(i=0;i<NX;i++){
-			for(k=0;k<NX;k++){
+		for(i = 0; i < NX; i++){
+			for(k = 0; k < NX; k++){
 				tmpm1[i][k]=-0.5*DT*J1[i][k];
 				tmpm2[i][k]=-0.5*DT*J2[i][k];
-				if(i==k){
-					
-					tmpm1[i][k] = -1 + tmpm1[i][k];
-					tmpm2[i][k] = 1 + tmpm2[i][k];
+				if(i == k){
+					tmpm1[i][k] -= 1;
+					tmpm2[i][k] += 1;
 				}
 			}
 		}
-		for(i=0;i<NX;i++){
-			tmpd = x2[i]-x1[i]-0.5*DT*(f1[i]+f2[i]);
-			action = action + Rf*tmpd*tmpd;
-			for(k=0;k<NX;k++){
-				
-				grad_m[j][k] = grad_m[j][k] + 2*Rf*tmpd * tmpm1[i][k];
-				grad_m[j+1][k] = grad_m[j+1][k] + 2*Rf*tmpd * tmpm2[i][k];
+		for(i = 0; i < NX; i++){
+			tmpd = x2[i] - x1[i] - 0.5*DT*(f1[i] + f2[i]);
+			action += Rf*tmpd*tmpd;
+			for(k = 0; k < NX; k++){
+				grad_m[j][k] += 2*Rf*tmpd * tmpm1[i][k];
+				grad_m[j+1][k] += 2*Rf*tmpd * tmpm2[i][k];
 			}
 		}
 	}
 	
-	for(i=0;i<NT;i++){
-		for(j=0;j<NX;j++){
+	for(i = 0; i < NT; i++){
+		for(j = 0; j < NX; j++){
 			grad[NX*i+j] = grad_m[i][j];
 		}
 	}

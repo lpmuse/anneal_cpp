@@ -14,3 +14,6 @@
 // Set data, stimulus file names below
 char data_fname[] = "twin_data.dat";
 char stim_fname[] = "stimulus.dat";
+
+// Set measured component indices
+int Lidx[] = {1};
